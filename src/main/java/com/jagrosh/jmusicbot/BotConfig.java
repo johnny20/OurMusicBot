@@ -62,18 +62,22 @@ public class BotConfig
         // read config from file
         try 
         {
+            this.initializeValues();
+            boolean write = this.validation();
+            writeToFile(write);
             // get the path to the config, default config.txt
-            path = OtherUtil.getPath(System.getProperty("config.file", System.getProperty("config", "config.txt")));
-            if(path.toFile().exists())
+            valid = true;
+        }
+        catch (ConfigException ex)
             {
-                if(System.getProperty("config.file") == null)
-                    System.setProperty("config.file", System.getProperty("config", "config.txt"));
-                ConfigFactory.invalidateCaches();
+            prompt.alert(Prompt.Level.ERROR, CONTEXT, ex + ": " + ex.getMessage() + "\n\nConfig Location: " + path.toAbsolutePath().toString());
+        }
             }
             
+    private void initializeValues() {
             // load in the config file, plus the default values
             //Config config = ConfigFactory.parseFile(path.toFile()).withFallback(ConfigFactory.load());
-            Config config = ConfigFactory.load();
+        Config config = this.createAConfig();
             
             // set values
             token = config.getString("token");
@@ -98,11 +102,32 @@ public class BotConfig
             playlistsFolder = config.getString("playlistsfolder");
             aliases = config.getConfig("aliases");
             dbots = owner == 113156185389092864L;
+    }
+    
+    private Config createAConfig() {
+    	try {
+    		// get the path to the config, default config.txt
+            path = OtherUtil.getPath(System.getProperty("config.file", System.getProperty("config", "config.txt")));
+            if(path.toFile().exists())
+            {
+                if(System.getProperty("config.file") == null)
+                    System.setProperty("config.file", System.getProperty("config", "config.txt"));
+                ConfigFactory.invalidateCaches();
+            }
             
-            // we may need to write a new config file
-            boolean write = false;
-
+    	} catch (ConfigException ex) {
+    	}
+    	return ConfigFactory.load();
+    }
+    private boolean validation() {
+    	boolean write = false;
+    	//validate token
+        write = this.validateToken();
             // validate bot token
+        write = this.validateOwner();
+        return write;
+    }
+    private boolean validateToken() {
             if(token==null || token.isEmpty() || token.equalsIgnoreCase("BOT_TOKEN_HERE"))
             {
                 token = prompt.prompt("Please provide a bot token."
@@ -112,15 +137,17 @@ public class BotConfig
                 if(token==null)
                 {
                     prompt.alert(Prompt.Level.WARNING, CONTEXT, "No token provided! Exiting.\n\nConfig Location: " + path.toAbsolutePath().toString());
-                    return;
+                return false;
                 }
                 else
                 {
-                    write = true;
+                return true;
                 }
             }
             
-            // validate bot owner
+		return false;
+    }
+    private boolean validateOwner() {
             if(owner<=0)
             {
                 try
@@ -138,29 +165,39 @@ public class BotConfig
                 if(owner<=0)
                 {
                     prompt.alert(Prompt.Level.ERROR, CONTEXT, "Invalid User ID! Exiting.\n\nConfig Location: " + path.toAbsolutePath().toString());
-                    return;
+                return false;
                 }
                 else
                 {
-                    write = true;
-                }
+            	return true;
             }
-            
-            if(write)
-                writeToFile();
-            
-            // if we get through the whole config, it's good to go
-            valid = true;
         }
-        catch (ConfigException ex)
-        {
-            prompt.alert(Prompt.Level.ERROR, CONTEXT, ex + ": " + ex.getMessage() + "\n\nConfig Location: " + path.toAbsolutePath().toString());
+    	
+    	return false;
+        }
+    
+    private void writeToFile(boolean allow) {
+    	if(allow) {
+    		writeToFile();
         }
     }
     
     private void writeToFile()
     {
         String original = OtherUtil.loadResource(this, "/reference.conf");
+        byte[] bytes = this.calculateBytes(original);
+        try 
+        {
+            Files.write(path, bytes);
+        }
+        catch(IOException ex) 
+        {
+            prompt.alert(Prompt.Level.WARNING, CONTEXT, "Failed to write new config options to config.txt: "+ex
+                + "\nPlease make sure that the files are not on your desktop or some other restricted area.\n\nConfig Location: " 
+                + path.toAbsolutePath().toString());
+        }
+    }
+    private byte[] calculateBytes(String original) {
         byte[] bytes;
         if(original==null)
         {
@@ -173,16 +210,8 @@ public class BotConfig
                 .replace("0 // OWNER ID", Long.toString(owner))
                 .trim().getBytes();
         }
-        try 
-        {
-            Files.write(path, bytes);
-        }
-        catch(IOException ex) 
-        {
-            prompt.alert(Prompt.Level.WARNING, CONTEXT, "Failed to write new config options to config.txt: "+ex
-                + "\nPlease make sure that the files are not on your desktop or some other restricted area.\n\nConfig Location: " 
-                + path.toAbsolutePath().toString());
-        }
+    	
+    	return bytes;
     }
     
     public boolean isValid()
