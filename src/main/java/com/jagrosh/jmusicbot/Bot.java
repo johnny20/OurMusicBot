@@ -15,8 +15,10 @@
  */
 package com.jagrosh.jmusicbot;
 
+import java.util.Objects;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
+
 import com.jagrosh.jdautilities.commons.waiter.EventWaiter;
 import com.jagrosh.jmusicbot.audio.AloneInVoiceHandler;
 import com.jagrosh.jmusicbot.audio.AudioHandler;
@@ -24,11 +26,17 @@ import com.jagrosh.jmusicbot.audio.NowplayingHandler;
 import com.jagrosh.jmusicbot.audio.PlayerManager;
 import com.jagrosh.jmusicbot.gui.GUI;
 import com.jagrosh.jmusicbot.playlist.PlaylistLoader;
+import com.jagrosh.jmusicbot.settings.Settings;
 import com.jagrosh.jmusicbot.settings.SettingsManager;
-import java.util.Objects;
+import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
+
 import net.dv8tion.jda.api.JDA;
+import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.Activity;
 import net.dv8tion.jda.api.entities.Guild;
+import net.dv8tion.jda.api.entities.TextChannel;
+import net.dv8tion.jda.api.exceptions.PermissionException;
+import net.dv8tion.jda.api.exceptions.RateLimitedException;
 
 /**
  *
@@ -123,6 +131,58 @@ public class Bot
             jda.getPresence().setActivity(game);
     }
 
+    /*Move method here from NowplayingHandler it used more here*/
+    public void updateTopic(long guildId, AudioHandler handler, boolean wait)
+    {
+        Guild guild = getJDA().getGuildById(guildId);
+        String str =  "\u200B";
+        
+        if(guild==null)
+            return;
+        Settings settings = getSettingsManager().getSettings(guildId);
+        TextChannel tchan = settings.getTextChannel(guild);
+        if(tchan!=null && guild.getSelfMember().hasPermission(tchan, Permission.MANAGE_CHANNEL))
+        {
+            String otherText;
+            String topic = tchan.getTopic();
+            if(topic==null || topic.isEmpty())
+                otherText = str;
+            else if(topic.contains(str))
+                otherText = topic.substring(topic.lastIndexOf("\u200B"));
+            else
+                otherText = str+"\n "+topic;
+            String text = handler.getTopicFormat(getJDA()) + otherText;
+            if(!text.equals(tchan.getTopic()))
+            {
+                try 
+                {
+                    // normally here if 'wait' was false, we'd want to queue, however,
+                    // new discord ratelimits specifically limiting changing channel topics
+                    // mean we don't want a backlog of changes piling up, so if we hit a 
+                    // ratelimit, we just won't change the topic this time
+                    tchan.getManager().setTopic(text).complete(wait);
+                } 
+                catch(PermissionException | RateLimitedException ignore) {}
+            }
+        }
+    }
+    
+    // "event"-based methods
+    public void onTrackUpdate(long guildId, AudioTrack track, AudioHandler handler)
+    {
+        // update bot status if applicable
+        if(getConfig().getSongInStatus())
+        {
+            if(track!=null && getJDA().getGuilds().stream().filter(g -> g.getSelfMember().getVoiceState().inVoiceChannel()).count()<=1)
+                getJDA().getPresence().setActivity(Activity.listening(track.getInfo().title));
+            else
+                resetGame();
+        }
+        
+        // update channel topic if applicable
+        updateTopic(guildId, handler, false);
+    }
+    
     public void shutdown()
     {
         if(shuttingDown)
@@ -139,7 +199,7 @@ public class Bot
                 {
                     ah.stopAndClear();
                     ah.getPlayer().destroy();
-                    nowplaying.updateTopic(g.getIdLong(), ah, true);
+                    updateTopic(g.getIdLong(), ah, true);
                 }
             });
             jda.shutdown();
