@@ -15,16 +15,18 @@
  */
 package com.jagrosh.jmusicbot.settings;
 
-import com.jagrosh.jdautilities.command.GuildSettingsManager;
-import com.jagrosh.jmusicbot.utils.OtherUtil;
 import java.io.IOException;
 import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.util.HashMap;
-import net.dv8tion.jda.api.entities.Guild;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.slf4j.LoggerFactory;
+
+import com.jagrosh.jdautilities.command.GuildSettingsManager;
+import com.jagrosh.jmusicbot.utils.OtherUtil;
+
+import net.dv8tion.jda.api.entities.Guild;
 
 /**
  *
@@ -39,7 +41,7 @@ public class SettingsManager implements GuildSettingsManager
         this.settings = new HashMap<>();
         try {
             JSONObject loadedSettings = new JSONObject(new String(Files.readAllBytes(OtherUtil.getPath("serversettings.json"))));
-            loadedSettings.keySet().forEach((id) -> {
+            loadedSettings.keySet().forEach(id -> {
                 JSONObject o = loadedSettings.getJSONObject(id);
                 settings.put(Long.parseLong(id), new Settings(this,
                         o.has("text_channel_id") ? o.getString("text_channel_id") : null,

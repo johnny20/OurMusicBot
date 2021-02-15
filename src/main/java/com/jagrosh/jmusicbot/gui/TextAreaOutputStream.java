@@ -139,19 +139,17 @@ private static String bytesToString(byte[] ba, int str, int len) {
     @Override
     public synchronized void run() {
         if(clear) { textArea.setText(""); }
-        values.stream().map((val) -> {
+        values.stream().map(val -> {
             curLength+=val.length();
             return val;
-        }).map((val) -> {
+        }).map(val -> {
             if(val.endsWith(EOL1) || val.endsWith(EOL2)) {
                 if(lengths.size()>=maxLines) { textArea.replaceRange("",0,lengths.removeFirst()); }
                 lengths.addLast(curLength);
                 curLength=0;
             }
             return val;
-        }).forEach((val) -> {
-            textArea.append(val);
-        });
+        }).forEach(val -> textArea.append(val));
         values.clear();
         clear =false;
         queue =true;

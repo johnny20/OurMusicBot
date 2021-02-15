@@ -137,7 +137,7 @@ public class AudioHandler extends AudioEventAdapter implements AudioSendHandler
         Playlist pl = manager.getBot().getPlaylistLoader().getPlaylist(settings.getDefaultPlaylist());
         if(pl==null || pl.getItems().isEmpty())
             return false;
-        pl.loadTracks(manager, (at) -> 
+        pl.loadTracks(manager, at -> 
         {
             if(audioPlayer.getPlayingTrack()==null)
                 audioPlayer.playTrack(at);
@@ -165,7 +165,6 @@ public class AudioHandler extends AudioEventAdapter implements AudioSendHandler
         {
             if(!playFromDefault())
             {
-//                manager.getBot().getNowplayingHandler().onTrackUpdate(guildId, null, this);
             	manager.getBot().onTrackUpdate(guildId, null, this);
                 if(!manager.getBot().getConfig().getStay())
                     manager.getBot().closeAudioConnection(guildId);
@@ -185,7 +184,6 @@ public class AudioHandler extends AudioEventAdapter implements AudioSendHandler
     public void onTrackStart(AudioPlayer player, AudioTrack track) 
     {
         votes.clear();
-       // manager.getBot().getNowplayingHandler().onTrackUpdate(guildId, track, this);
         manager.getBot().onTrackUpdate(guildId, track, this);
     }
 
@@ -266,29 +264,7 @@ public class AudioHandler extends AudioEventAdapter implements AudioSendHandler
         }
         else return "No music playing " + JMusicBot.STOP_EMOJI + " " + FormatUtil.volumeIcon(audioPlayer.getVolume());
     }
-    
-    // Audio Send Handler methods
-    /*@Override
-    public boolean canProvide() 
-    {
-        if (lastFrame == null)
-            lastFrame = audioPlayer.provide();
-
-        return lastFrame != null;
-    }
-
-    @Override
-    public byte[] provide20MsAudio() 
-    {
-        if (lastFrame == null) 
-            lastFrame = audioPlayer.provide();
-
-        byte[] data = lastFrame != null ? lastFrame.getData() : null;
-        lastFrame = null;
-
-        return data;
-    }*/
-    
+        
     @Override
     public boolean canProvide() 
     {

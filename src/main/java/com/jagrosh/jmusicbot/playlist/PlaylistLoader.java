@@ -15,6 +15,17 @@
  */
 package com.jagrosh.jmusicbot.playlist;
 
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.function.Consumer;
+import java.util.stream.Collectors;
+
 import com.jagrosh.jmusicbot.BotConfig;
 import com.jagrosh.jmusicbot.utils.OtherUtil;
 import com.sedmelluq.discord.lavaplayer.player.AudioLoadResultHandler;
@@ -22,12 +33,6 @@ import com.sedmelluq.discord.lavaplayer.player.AudioPlayerManager;
 import com.sedmelluq.discord.lavaplayer.tools.FriendlyException;
 import com.sedmelluq.discord.lavaplayer.track.AudioPlaylist;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
-import java.io.File;
-import java.io.IOException;
-import java.nio.file.Files;
-import java.util.*;
-import java.util.function.Consumer;
-import java.util.stream.Collectors;
 
 /**
  *
@@ -47,7 +52,7 @@ public class PlaylistLoader
         if(folderExists())
         {
             File folder = new File(config.getPlaylistsFolder());
-            return Arrays.asList(folder.listFiles((pathname) -> pathname.getName().endsWith(".txt")))
+            return Arrays.asList(folder.listFiles(pathname -> pathname.getName().endsWith(".txt")))
                     .stream().map(f -> f.getName().substring(0,f.getName().length()-4)).collect(Collectors.toList());
         }
         else

@@ -17,10 +17,12 @@ package com.jagrosh.jmusicbot.commands.owner;
 
 import java.io.IOException;
 import java.io.InputStream;
+
 import com.jagrosh.jdautilities.command.CommandEvent;
 import com.jagrosh.jmusicbot.Bot;
 import com.jagrosh.jmusicbot.commands.OwnerCommand;
 import com.jagrosh.jmusicbot.utils.OtherUtil;
+
 import net.dv8tion.jda.api.entities.Icon;
 
 /**
@@ -45,8 +47,9 @@ public class SetavatarCmd extends OwnerCommand
         if(event.getArgs().isEmpty())
             if(!event.getMessage().getAttachments().isEmpty() && event.getMessage().getAttachments().get(0).isImage())
                 url = event.getMessage().getAttachments().get(0).getUrl();
-            else
+            else {
                 url = null;
+            }
         else
             url = event.getArgs();
         InputStream s = OtherUtil.imageFromUrl(url);

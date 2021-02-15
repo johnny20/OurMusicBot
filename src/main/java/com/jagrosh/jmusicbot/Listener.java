@@ -15,8 +15,14 @@
  */
 package com.jagrosh.jmusicbot;
 
-import com.jagrosh.jmusicbot.utils.OtherUtil;
 import java.util.concurrent.TimeUnit;
+
+import org.jetbrains.annotations.NotNull;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.jagrosh.jmusicbot.utils.OtherUtil;
+
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.User;
@@ -27,9 +33,6 @@ import net.dv8tion.jda.api.events.guild.GuildJoinEvent;
 import net.dv8tion.jda.api.events.guild.voice.GuildVoiceUpdateEvent;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageDeleteEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
-import org.jetbrains.annotations.NotNull;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  *
@@ -54,7 +57,7 @@ public class Listener extends ListenerAdapter
             log.warn(event.getJDA().getInviteUrl(JMusicBot.RECOMMENDED_PERMS));
         }
         credit(event.getJDA());
-        event.getJDA().getGuilds().forEach((guild) -> 
+        event.getJDA().getGuilds().forEach(guild -> 
         {
             try
             {
