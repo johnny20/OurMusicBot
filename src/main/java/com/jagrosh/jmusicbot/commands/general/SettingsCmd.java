@@ -20,6 +20,7 @@ import com.jagrosh.jdautilities.command.CommandEvent;
 import com.jagrosh.jmusicbot.Bot;
 import com.jagrosh.jmusicbot.settings.Settings;
 import com.jagrosh.jmusicbot.utils.FormatUtil;
+
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.MessageBuilder;
 import net.dv8tion.jda.api.entities.Role;
@@ -32,7 +33,7 @@ import net.dv8tion.jda.api.entities.VoiceChannel;
  */
 public class SettingsCmd extends Command 
 {
-    private final static String EMOJI = "\uD83C\uDFA7"; // 🎧
+    private static final String EMOJI = "\uD83C\uDFA7"; // 🎧
     
     public SettingsCmd(Bot bot)
     {

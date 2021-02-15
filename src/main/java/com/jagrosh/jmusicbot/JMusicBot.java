@@ -15,27 +15,63 @@
  */
 package com.jagrosh.jmusicbot;
 
+import java.awt.Color;
+import java.util.Arrays;
+
+import javax.security.auth.login.LoginException;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.jagrosh.jdautilities.command.CommandClientBuilder;
 import com.jagrosh.jdautilities.commons.waiter.EventWaiter;
-import com.jagrosh.jdautilities.examples.command.*;
-import com.jagrosh.jmusicbot.commands.admin.*;
-import com.jagrosh.jmusicbot.commands.dj.*;
-import com.jagrosh.jmusicbot.commands.general.*;
-import com.jagrosh.jmusicbot.commands.music.*;
-import com.jagrosh.jmusicbot.commands.owner.*;
+import com.jagrosh.jdautilities.examples.command.AboutCommand;
+import com.jagrosh.jdautilities.examples.command.PingCommand;
+import com.jagrosh.jmusicbot.commands.admin.PrefixCmd;
+import com.jagrosh.jmusicbot.commands.admin.SetdjCmd;
+import com.jagrosh.jmusicbot.commands.admin.SettcCmd;
+import com.jagrosh.jmusicbot.commands.admin.SetvcCmd;
+import com.jagrosh.jmusicbot.commands.dj.ForceRemoveCmd;
+import com.jagrosh.jmusicbot.commands.dj.ForceskipCmd;
+import com.jagrosh.jmusicbot.commands.dj.MoveTrackCmd;
+import com.jagrosh.jmusicbot.commands.dj.PauseCmd;
+import com.jagrosh.jmusicbot.commands.dj.PlaynextCmd;
+import com.jagrosh.jmusicbot.commands.dj.RepeatCmd;
+import com.jagrosh.jmusicbot.commands.dj.SkiptoCmd;
+import com.jagrosh.jmusicbot.commands.dj.StopCmd;
+import com.jagrosh.jmusicbot.commands.dj.VolumeCmd;
+import com.jagrosh.jmusicbot.commands.general.SettingsCmd;
+import com.jagrosh.jmusicbot.commands.music.LyricsCmd;
+import com.jagrosh.jmusicbot.commands.music.NowplayingCmd;
+import com.jagrosh.jmusicbot.commands.music.PlayCmd;
+import com.jagrosh.jmusicbot.commands.music.PlaylistsCmd;
+import com.jagrosh.jmusicbot.commands.music.QueueCmd;
+import com.jagrosh.jmusicbot.commands.music.RemoveCmd;
+import com.jagrosh.jmusicbot.commands.music.SCSearchCmd;
+import com.jagrosh.jmusicbot.commands.music.SearchCmd;
+import com.jagrosh.jmusicbot.commands.music.ShuffleCmd;
+import com.jagrosh.jmusicbot.commands.music.SkipCmd;
+import com.jagrosh.jmusicbot.commands.owner.AutoplaylistCmd;
+import com.jagrosh.jmusicbot.commands.owner.DebugCmd;
+import com.jagrosh.jmusicbot.commands.owner.EvalCmd;
+import com.jagrosh.jmusicbot.commands.owner.PlaylistCmd;
+import com.jagrosh.jmusicbot.commands.owner.SetavatarCmd;
+import com.jagrosh.jmusicbot.commands.owner.SetgameCmd;
+import com.jagrosh.jmusicbot.commands.owner.SetnameCmd;
+import com.jagrosh.jmusicbot.commands.owner.SetstatusCmd;
+import com.jagrosh.jmusicbot.commands.owner.ShutdownCmd;
 import com.jagrosh.jmusicbot.entities.Prompt;
 import com.jagrosh.jmusicbot.gui.GUI;
 import com.jagrosh.jmusicbot.settings.SettingsManager;
 import com.jagrosh.jmusicbot.utils.OtherUtil;
-import java.awt.Color;
-import java.util.Arrays;
-import javax.security.auth.login.LoginException;
-import net.dv8tion.jda.api.*;
+
+import net.dv8tion.jda.api.JDA;
+import net.dv8tion.jda.api.JDABuilder;
+import net.dv8tion.jda.api.OnlineStatus;
+import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.Activity;
 import net.dv8tion.jda.api.requests.GatewayIntent;
 import net.dv8tion.jda.api.utils.cache.CacheFlag;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  *
@@ -43,13 +79,13 @@ import org.slf4j.LoggerFactory;
  */
 public class JMusicBot 
 {
-    public final static String PLAY_EMOJI  = "\u25B6"; // ▶
-    public final static String PAUSE_EMOJI = "\u23F8"; // ⏸
-    public final static String STOP_EMOJI  = "\u23F9"; // ⏹
-    public final static Permission[] RECOMMENDED_PERMS = {Permission.MESSAGE_READ, Permission.MESSAGE_WRITE, Permission.MESSAGE_HISTORY, Permission.MESSAGE_ADD_REACTION,
+    public static final  String PLAY_EMOJI  = "\u25B6"; // ▶
+    public static final  String PAUSE_EMOJI = "\u23F8"; // ⏸
+    public static final  String STOP_EMOJI  = "\u23F9"; // ⏹
+    public static final  Permission[] RECOMMENDED_PERMS = {Permission.MESSAGE_READ, Permission.MESSAGE_WRITE, Permission.MESSAGE_HISTORY, Permission.MESSAGE_ADD_REACTION,
                                 Permission.MESSAGE_EMBED_LINKS, Permission.MESSAGE_ATTACH_FILES, Permission.MESSAGE_MANAGE, Permission.MESSAGE_EXT_EMOJI,
                                 Permission.MANAGE_CHANNEL, Permission.VOICE_CONNECT, Permission.VOICE_SPEAK, Permission.NICKNAME_CHANGE};
-    public final static GatewayIntent[] INTENTS = {GatewayIntent.DIRECT_MESSAGES, GatewayIntent.GUILD_MESSAGES, GatewayIntent.GUILD_MESSAGE_REACTIONS, GatewayIntent.GUILD_VOICE_STATES};
+    public static final  GatewayIntent[] INTENTS = {GatewayIntent.DIRECT_MESSAGES, GatewayIntent.GUILD_MESSAGES, GatewayIntent.GUILD_MESSAGE_REACTIONS, GatewayIntent.GUILD_VOICE_STATES};
     /**
      * @param args the command line arguments
      */

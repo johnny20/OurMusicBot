@@ -15,20 +15,31 @@
  */
 package com.jagrosh.jmusicbot.utils;
 
-import com.jagrosh.jmusicbot.JMusicBot;
-import com.jagrosh.jmusicbot.entities.Prompt;
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.Reader;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import net.dv8tion.jda.api.OnlineStatus;
-import net.dv8tion.jda.api.entities.Activity;
-import okhttp3.*;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.json.JSONTokener;
+
+import com.jagrosh.jmusicbot.JMusicBot;
+import com.jagrosh.jmusicbot.entities.Prompt;
+
+import net.dv8tion.jda.api.OnlineStatus;
+import net.dv8tion.jda.api.entities.Activity;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.Response;
+import okhttp3.ResponseBody;
 
 /**
  *
@@ -36,11 +47,11 @@ import org.json.JSONTokener;
  */
 public class OtherUtil
 {
-    public final static String NEW_VERSION_AVAILABLE = "There is a new version of JMusicBot available!\n"
+    public static final String NEW_VERSION_AVAILABLE = "There is a new version of JMusicBot available!\n"
                     + "Current version: %s\n"
                     + "New Version: %s\n\n"
                     + "Please visit https://github.com/jagrosh/MusicBot/releases/latest to get the latest release.";
-    private final static String WINDOWS_INVALID_PATH = "c:\\windows\\system32\\";
+    private static final String WINDOWS_INVALID_PATH = "c:\\windows\\system32\\";
     
     /**
      * gets a Path from a String

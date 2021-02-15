@@ -15,11 +15,14 @@
  */
 package com.jagrosh.jmusicbot.gui;
 
-import java.awt.*;
-import java.io.*;
-import java.util.*;
+import java.awt.EventQueue;
+import java.io.OutputStream;
+import java.io.UnsupportedEncodingException;
+import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
-import javax.swing.*;
+
+import javax.swing.JTextArea;
 /**
  *
  * @author Lawrence Dol
@@ -75,7 +78,7 @@ public synchronized void write(byte[] ba,int str,int len) {
     }
 
 //@edu.umd.cs.findbugs.annotations.SuppressWarnings("DM_DEFAULT_ENCODING")
-static private String bytesToString(byte[] ba, int str, int len) {
+private static String bytesToString(byte[] ba, int str, int len) {
     try { 
         return new String(ba,str,len,"UTF-8"); 
     } catch(UnsupportedEncodingException thr) { 
@@ -90,8 +93,8 @@ static private String bytesToString(byte[] ba, int str, int len) {
     static class Appender
     implements Runnable
     {
-    static private final String         EOL1="\n";
-    static private final String         EOL2=System.getProperty("line.separator",EOL1);
+    private static final String         EOL1="\n";
+    private static final String         EOL2=System.getProperty("line.separator",EOL1);
     
     private final JTextArea             textArea;
     private final int                   maxLines;                                                   // maximum lines allowed in text area

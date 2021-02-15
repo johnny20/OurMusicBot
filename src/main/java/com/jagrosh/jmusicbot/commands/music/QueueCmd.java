@@ -17,6 +17,7 @@ package com.jagrosh.jmusicbot.commands.music;
 
 import java.util.List;
 import java.util.concurrent.TimeUnit;
+
 import com.jagrosh.jdautilities.command.CommandEvent;
 import com.jagrosh.jdautilities.menu.Paginator;
 import com.jagrosh.jmusicbot.Bot;
@@ -26,6 +27,7 @@ import com.jagrosh.jmusicbot.audio.QueuedTrack;
 import com.jagrosh.jmusicbot.commands.MusicCommand;
 import com.jagrosh.jmusicbot.settings.Settings;
 import com.jagrosh.jmusicbot.utils.FormatUtil;
+
 import net.dv8tion.jda.api.MessageBuilder;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.Message;
@@ -37,7 +39,7 @@ import net.dv8tion.jda.api.exceptions.PermissionException;
  */
 public class QueueCmd extends MusicCommand 
 {
-    private final static String REPEAT = "\uD83D\uDD01"; // 🔁
+    private static final String REPEAT = "\uD83D\uDD01"; // 🔁
     
     private final Paginator.Builder builder;
     

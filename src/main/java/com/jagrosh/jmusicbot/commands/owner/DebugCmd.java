@@ -21,6 +21,7 @@ import com.jagrosh.jmusicbot.Bot;
 import com.jagrosh.jmusicbot.commands.OwnerCommand;
 import com.jagrosh.jmusicbot.utils.OtherUtil;
 import com.sedmelluq.discord.lavaplayer.tools.PlayerLibrary;
+
 import net.dv8tion.jda.api.JDAInfo;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.ChannelType;
@@ -31,7 +32,7 @@ import net.dv8tion.jda.api.entities.ChannelType;
  */
 public class DebugCmd extends OwnerCommand 
 {
-    private final static String[] PROPERTIES = {"java.version", "java.vm.name", "java.vm.specification.version", 
+    private static final String[] PROPERTIES = {"java.version", "java.vm.name", "java.vm.specification.version", 
         "java.runtime.name", "java.runtime.version", "java.specification.version",  "os.arch", "os.name"};
     
     private final Bot bot;
