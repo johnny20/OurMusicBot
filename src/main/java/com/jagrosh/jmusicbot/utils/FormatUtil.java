@@ -25,7 +25,7 @@ import net.dv8tion.jda.api.entities.VoiceChannel;
  * @author John Grosh <john.a.grosh@gmail.com>
  */
 public class FormatUtil {
-    
+    private static final String more = " more...**";
     public static String formatTime(long duration)
     {
         if(duration == Long.MAX_VALUE)
@@ -66,7 +66,7 @@ public class FormatUtil {
         for(int i=0; i<6 && i<list.size(); i++)
             out+="\n - "+list.get(i).getName()+" (<#"+list.get(i).getId()+">)";
         if(list.size()>6)
-            out+="\n**And "+(list.size()-6)+" more...**";
+            out+="\n**And "+(list.size()-6)+FormatUtil.more;
         return out;
     }
     
@@ -76,7 +76,7 @@ public class FormatUtil {
         for(int i=0; i<6 && i<list.size(); i++)
             out+="\n - "+list.get(i).getName()+" (ID:"+list.get(i).getId()+")";
         if(list.size()>6)
-            out+="\n**And "+(list.size()-6)+" more...**";
+            out+="\n**And "+(list.size()-6)+FormatUtil.more;
         return out;
     }
     
@@ -86,7 +86,7 @@ public class FormatUtil {
         for(int i=0; i<6 && i<list.size(); i++)
             out+="\n - "+list.get(i).getName()+" (ID:"+list.get(i).getId()+")";
         if(list.size()>6)
-            out+="\n**And "+(list.size()-6)+" more...**";
+            out+="\n**And "+(list.size()-6)+FormatUtil.more;
         return out;
     }
     

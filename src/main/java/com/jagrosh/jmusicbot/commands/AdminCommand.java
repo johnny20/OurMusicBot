@@ -24,7 +24,7 @@ import net.dv8tion.jda.api.Permission;
  */
 public abstract class AdminCommand extends Command
 {
-    public AdminCommand()
+    protected AdminCommand()
     {
         this.category = new Category("Admin", event -> 
         {

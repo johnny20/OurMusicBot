@@ -38,6 +38,7 @@ import net.dv8tion.jda.api.entities.Activity;
 public class BotConfig
 {
     private final Prompt prompt;
+    private final String config_file = "config.file";
     private static final String CONTEXT = "Config";
     private static final String START_TOKEN = "/// START OF JMUSICBOT CONFIG ///";
     private static final String END_TOKEN = "/// END OF JMUSICBOT CONFIG ///";
@@ -111,11 +112,11 @@ public class BotConfig
     private Config createAConfig() {
     	try {
     		// get the path to the config, default config.txt
-            path = OtherUtil.getPath(System.getProperty("config.file", System.getProperty("config", "config.txt")));
+            path = OtherUtil.getPath(System.getProperty(this.config_file, System.getProperty("config", "config.txt")));
             if(path.toFile().exists())
             {
-                if(System.getProperty("config.file") == null)
-                    System.setProperty("config.file", System.getProperty("config", "config.txt"));
+                if(System.getProperty(this.config_file) == null)
+                    System.setProperty(this.config_file, System.getProperty("config", "config.txt"));
                 ConfigFactory.invalidateCaches();
             }
             
