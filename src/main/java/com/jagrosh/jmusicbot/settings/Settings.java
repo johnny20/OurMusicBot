@@ -15,9 +15,11 @@
  */
 package com.jagrosh.jmusicbot.settings;
 
-import com.jagrosh.jdautilities.command.GuildSettingsProvider;
 import java.util.Collection;
 import java.util.Collections;
+
+import com.jagrosh.jdautilities.command.GuildSettingsProvider;
+
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Role;
 import net.dv8tion.jda.api.entities.TextChannel;
@@ -122,7 +124,7 @@ public class Settings implements GuildSettingsProvider
     @Override
     public Collection<String> getPrefixes()
     {
-        return prefix == null ? Collections.EMPTY_SET : Collections.singleton(prefix);
+        return prefix == null ? Collections.emptySet() : Collections.singleton(prefix);
     }
     
     // Setters

@@ -142,7 +142,7 @@ public class PlayCmd extends MusicCommand
         private int loadPlaylist(AudioPlaylist playlist, AudioTrack exclude)
         {
             int[] count = {0};
-            playlist.getTracks().stream().forEach((track) -> {
+            playlist.getTracks().stream().forEach(track -> {
                 if(!bot.getConfig().isTooLong(track) && !track.equals(exclude))
                 {
                     AudioHandler handler = (AudioHandler)event.getGuild().getAudioManager().getSendingHandler();
@@ -159,38 +159,39 @@ public class PlayCmd extends MusicCommand
             loadSingle(track, null);
         }
 
+   
         @Override
         public void playlistLoaded(AudioPlaylist playlist)
         {
-            if(playlist.getTracks().size()==1 || playlist.isSearchResult())
-            {
-                AudioTrack single = playlist.getSelectedTrack()==null ? playlist.getTracks().get(0) : playlist.getSelectedTrack();
+        	AudioTrack single= null;
+        	int count = loadPlaylist(playlist, null);
+        	
+            if (playlist.getSelectedTrack()==null)
+                single = playlist.getTracks().get(0);
+            else
+            	 single = playlist.getSelectedTrack();       	
+        	
+        	
+        	if(playlist.getTracks().size()==1 || playlist.isSearchResult()) {                
                 loadSingle(single, null);
             }
-            else if (playlist.getSelectedTrack()!=null)
-            {
-                AudioTrack single = playlist.getSelectedTrack();
+        	else if (playlist.getSelectedTrack()!=null) {                
                 loadSingle(single, playlist);
             }
-            else
-            {
-                int count = loadPlaylist(playlist, null);
-                if(count==0)
-                {
+            else if(count==0){
                     m.editMessage(FormatUtil.filter(event.getClient().getWarning()+" All entries in this playlist "+(playlist.getName()==null ? "" : "(**"+playlist.getName()
                             +"**) ")+"were longer than the allowed maximum (`"+bot.getConfig().getMaxTime()+"`)")).queue();
                 }
-                else
-                {
+            else{
                     m.editMessage(FormatUtil.filter(event.getClient().getSuccess()+" Found "
                             +(playlist.getName()==null?"a playlist":"playlist **"+playlist.getName()+"**")+" with `"
                             + playlist.getTracks().size()+"` entries; added to the queue!"
                             + (count<playlist.getTracks().size() ? "\n"+event.getClient().getWarning()+" Tracks longer than the allowed maximum (`"
                             + bot.getConfig().getMaxTime()+"`) have been omitted." : ""))).queue();
                 }
-            }
+            
         }
-
+        
         @Override
         public void noMatches()
         {
@@ -240,7 +241,7 @@ public class PlayCmd extends MusicCommand
             event.getChannel().sendMessage(loadingEmoji+" Loading playlist **"+event.getArgs()+"**... ("+playlist.getItems().size()+" items)").queue(m -> 
             {
                 AudioHandler handler = (AudioHandler)event.getGuild().getAudioManager().getSendingHandler();
-                playlist.loadTracks(bot.getPlayerManager(), (at)->handler.addTrack(new QueuedTrack(at, event.getAuthor())), () -> {
+                playlist.loadTracks(bot.getPlayerManager(), at->handler.addTrack(new QueuedTrack(at, event.getAuthor())), () -> {
                     StringBuilder builder = new StringBuilder(playlist.getTracks().isEmpty() 
                             ? event.getClient().getWarning()+" No tracks were loaded!" 
                             : event.getClient().getSuccess()+" Loaded **"+playlist.getTracks().size()+"** tracks!");
