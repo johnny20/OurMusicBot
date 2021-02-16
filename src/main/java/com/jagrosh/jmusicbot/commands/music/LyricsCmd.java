@@ -47,10 +47,8 @@ public class LyricsCmd extends MusicCommand
     {
         event.getChannel().sendTyping().queue();
         String title;
-        if(event.getArgs().isEmpty())
-            title = ((AudioHandler)event.getGuild().getAudioManager().getSendingHandler()).getPlayer().getPlayingTrack().getInfo().title;
-        else
-            title = event.getArgs();
+        title = this.setTitle(event);
+    
         client.getLyrics(title).thenAccept(lyrics -> 
         {
             if(lyrics == null)
@@ -72,13 +70,7 @@ public class LyricsCmd extends MusicCommand
                 String content = lyrics.getContent().trim();
                 while(content.length() > 2000)
                 {
-                    int index = content.lastIndexOf("\n\n", 2000);
-                    if(index == -1)
-                        index = content.lastIndexOf("\n", 2000);
-                    if(index == -1)
-                        index = content.lastIndexOf(" ", 2000);
-                    if(index == -1)
-                        index = 2000;
+                    int index = this.getLastIndex(content);
                     event.reply(eb.setDescription(content.substring(0, index).trim()).build());
                     content = content.substring(index).trim();
                     eb.setAuthor(null).setTitle(null, null);
@@ -88,5 +80,23 @@ public class LyricsCmd extends MusicCommand
             else
                 event.reply(eb.setDescription(lyrics.getContent()).build());
         });
+    }
+    
+    private int getLastIndex(String content) {
+    	int index = content.lastIndexOf("\n\n", 2000);
+        if(index == -1)
+            index = content.lastIndexOf("\n", 2000);
+        if(index == -1)
+            index = content.lastIndexOf(" ", 2000);
+        if(index == -1)
+            index = 2000;
+        return index;
+    }
+    
+    private String setTitle(CommandEvent event) {
+    	 if(event.getArgs().isEmpty())
+    	        return ((AudioHandler)event.getGuild().getAudioManager().getSendingHandler()).getPlayer().getPlayingTrack().getInfo().title;
+    	    else
+    	        return event.getArgs();
     }
 }
